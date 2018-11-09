@@ -21,16 +21,16 @@ contract Trades{
     mapping (uint => trade) public tradeReceived;
     trade[] public TradePool;
     uint count;
-    uint minPrice;
+    uint public minPrice;
 
     constructor() public {
         count = 0;
         minPrice = 0;
     }
 
-    function createTrade(string title_, string detail_) payable public returns (string Info) {
+    function createTrade(bytes32[] title_, bytes32[] detail_) payable public returns (bool) {
         if (msg.value < minPrice){
-            return "false";
+            return false;
         }
         trade memory item = trade({
             initiatorAddress: msg.sender,
@@ -47,7 +47,7 @@ contract Trades{
         tradeReceived[count] = item;
         validTrade[count] = true;
         count += 1;
-        return "create trade successfully!";
+        return true;
     }
 
     function acceptTrade(uint id) public returns (bool success) {
@@ -62,7 +62,7 @@ contract Trades{
         return true;
     }
 
-    function finishTrade(uint id, string info) public returns (bool success){
+    function finishTrade(uint id, bytes32[] info) public returns (bool success){
         require(validTrade[id]);
 
         trade storage tmptrade = tradeReceived[id];
@@ -88,7 +88,7 @@ contract Trades{
         return true;
     }
     
-    function showCount() public returns (uint Count){
+    function showCount() view public returns (uint Count){
         return count;
     }
 
