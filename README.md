@@ -7,6 +7,7 @@ truffle compile
 truffle networks --clean
 truffle migrate --network ganache
 truffle console --network ganache
+truffle test -- 
 
 Trades.deployed().then(function(contract) {contract.createTrade("testTitle","testDetail",{value: web3.toWei('10', 'ether'), from: web3.eth.accounts[5]}).then(function(result){console.log(result)})})
 

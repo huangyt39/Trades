@@ -1,6 +1,5 @@
 pragma solidity ^0.4.18;
 
-
 contract Trades{
 
     enum tradeState {Unaccept, Unfinish, Uncomfirm, End}
@@ -8,8 +7,8 @@ contract Trades{
     struct trade{
         address initiatorAddress;
         address recipientAddress;
-        string title;
-        string detail;
+        bytes32[] title;
+        bytes32[] detail;
         uint price;
         uint id;
         tradeState state;
@@ -62,7 +61,7 @@ contract Trades{
         return true;
     }
 
-    function finishTrade(uint id, bytes32[] info) public returns (bool success){
+    function finishTrade(uint id, string info) public returns (bool success){
         require(validTrade[id]);
 
         trade storage tmptrade = tradeReceived[id];
