@@ -4,11 +4,13 @@ contract Trades{
 
     enum tradeState {Unaccept, Unfinish, Uncomfirm, End}
 
+    event createTra(address indexed _from, string indexed _title, bool indexed _success);
+
     struct trade{
         address initiatorAddress;
         address recipientAddress;
-        bytes32[] title;
-        bytes32[] detail;
+        string title;
+        string detail;
         uint price;
         uint id;
         tradeState state;
@@ -27,9 +29,10 @@ contract Trades{
         minPrice = 0;
     }
 
-    function createTrade(bytes32[] title_, bytes32[] detail_) payable public returns (bool) {
+    function createTrade(string title_, string detail_) payable public {
+        
         if (msg.value < minPrice){
-            return false;
+            emit createTra(msg.sender, title_, false);
         }
         trade memory item = trade({
             initiatorAddress: msg.sender,
@@ -46,7 +49,7 @@ contract Trades{
         tradeReceived[count] = item;
         validTrade[count] = true;
         count += 1;
-        return true;
+        emit createTra(msg.sender, title_, true);
     }
 
     function acceptTrade(uint id) public returns (bool success) {
@@ -91,4 +94,7 @@ contract Trades{
         return count;
     }
 
+    function getInfoById(uint id) view public returns (address Info){
+        return tradeReceived[id].initiatorAddress;
+    }
 }

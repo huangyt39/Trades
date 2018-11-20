@@ -1,8 +1,9 @@
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+require("babel-polyfill");
 
 module.exports = {
-  entry: './app/scripts/index.js',
+  entry: ['babel-polyfill', './app/scripts/index.js'],
   mode: 'production',
   output: {
     path: path.resolve(__dirname, 'build'),
