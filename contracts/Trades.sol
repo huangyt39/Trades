@@ -4,7 +4,7 @@ contract Trades{
 
     enum tradeState {Unaccept, Unfinish, Uncomfirm, End}
 
-    event createTra(address indexed _from, string indexed _title, bool indexed _success);
+    event StateTranslate(uint _id, tradeState _state, uint _price,bool _success);
 
     struct trade{
         address initiatorAddress;
@@ -18,6 +18,7 @@ contract Trades{
         bool comfirm;
     }
 
+    address public owner;
     mapping (uint => bool) public validTrade;
     mapping (uint => trade) public tradeReceived;
     trade[] public TradePool;
@@ -27,12 +28,13 @@ contract Trades{
     constructor() public {
         count = 0;
         minPrice = 0;
+        owner = msg.sender;
     }
 
     function createTrade(string title_, string detail_) payable public {
-        
         if (msg.value < minPrice){
-            emit createTra(msg.sender, title_, false);
+            emit StateTranslate(count, tradeState.Unaccept, msg.value, false);
+            return;
         }
         trade memory item = trade({
             initiatorAddress: msg.sender,
@@ -49,52 +51,53 @@ contract Trades{
         tradeReceived[count] = item;
         validTrade[count] = true;
         count += 1;
-        emit createTra(msg.sender, title_, true);
+        emit StateTranslate(count-1, tradeReceived[count-1].state, tradeReceived[count-1].price, true);
     }
 
-    function acceptTrade(uint id) public returns (bool success) {
-        require(validTrade[id]);
+    function acceptTrade(uint id) public {
+        require(validTrade[id], "unvalid id");
 
         trade storage tmptrade = tradeReceived[id];
         if (tmptrade.state != tradeState.Unaccept || tmptrade.initiatorAddress == msg.sender){
-            return false;
+            emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, false);
+            return;
         }
         tmptrade.recipientAddress = msg.sender;
         tmptrade.state = tradeState.Unfinish;
-        return true;
+        emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
     }
 
-    function finishTrade(uint id, string info) public returns (bool success){
-        require(validTrade[id]);
+    function finishTrade(uint id, string info) public{
+        require(validTrade[id], "unvalid id");
 
         trade storage tmptrade = tradeReceived[id];
         if (tmptrade.state != tradeState.Unfinish || tmptrade.recipientAddress != msg.sender){
-            return false;
+            emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, false);
+            return;
         }
         tmptrade.finishInfo = info;
         tmptrade.state = tradeState.Uncomfirm;
-        return true;
+        emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
     }
 
-    function comfirmTrade(uint id) public returns (bool success){
-        require(validTrade[id]);
+    function comfirmTrade(uint id) public{
+        require(validTrade[id], "unvalid id");
 
         trade storage tmptrade = tradeReceived[id];
         if(tmptrade.state != tradeState.Uncomfirm || msg.sender != tmptrade.initiatorAddress){
-            return false;
+            emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, false);
+            return;
         }
         tradeReceived[id].comfirm = true;
         tradeReceived[id].state = tradeState.End;
-        tradeReceived[id].recipientAddress.transfer(tradeReceived[id].price);
+        owner.transfer(tradeReceived[id].price);
         validTrade[id] = false;
-        return true;
+        emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
     }
     
     function showCount() view public returns (uint Count){
         return count;
     }
 
-    function getInfoById(uint id) view public returns (address Info){
-        return tradeReceived[id].initiatorAddress;
-    }
+    function fund() external payable {}
 }
