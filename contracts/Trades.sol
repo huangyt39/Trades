@@ -2,19 +2,28 @@ pragma solidity ^0.4.18;
 
 contract Trades{
 
-    enum tradeState {Unaccept, Unfinish, Uncomfirm, End}
+    enum tradeState {Unaccept, Unfinish, Uncomfirm, End, Destory}
 
     event StateTranslate(uint _id, tradeState _state, uint _price,bool _success);
 
     struct trade{
+        //创建者地址
         address initiatorAddress;
+        //接受者地址
         address recipientAddress;
+        //交易标题
         string title;
+        //交易细节
         string detail;
+        //交易价格
         uint price;
+        //交易id
         uint id;
+        //交易状态
         tradeState state;
+        //完成信息
         string finishInfo;
+        //是否确认
         bool comfirm;
     }
 
@@ -95,6 +104,20 @@ contract Trades{
         emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
     }
     
+    function destoryTrade(uint id) public{
+        require(validTrade[id], "unvalid id");
+
+        trade storage tmptrade = tradeReceived[id];
+        if(tmptrade.state != tradeState.Unaccept || msg.sender != tmptrade.initiatorAddress){
+            emit StateTranslate(tmptrade.id, tradeState.Destory, tmptrade.price, false);
+            return;
+        }
+        owner.transfer(tradeReceived[id].price);
+        tradeReceived[id].state = tradeState.Destory;
+        validTrade[id] = false;
+        emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
+    }
+
     function showCount() view public returns (uint Count){
         return count;
     }
