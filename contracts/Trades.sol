@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.5.1;
 
 contract Trades{
 
@@ -27,27 +27,29 @@ contract Trades{
         bool comfirm;
     }
 
-    address public owner;
+    address payable public owner;
     mapping (uint => bool) public validTrade;
     mapping (uint => trade) public tradeReceived;
     trade[] public TradePool;
+    uint validCount;
     uint count;
     uint public minPrice;
 
     constructor() public {
+        validCount = 0;
         count = 0;
         minPrice = 0;
         owner = msg.sender;
     }
 
-    function createTrade(string title_, string detail_) payable public {
+    function createTrade(string memory title_, string memory detail_) payable public {
         if (msg.value < minPrice){
             emit StateTranslate(count, tradeState.Unaccept, msg.value, false);
             return;
         }
         trade memory item = trade({
             initiatorAddress: msg.sender,
-            recipientAddress: 0,
+            recipientAddress: msg.sender,
             title: title_,
             detail: detail_,
             price: msg.value,
@@ -59,6 +61,7 @@ contract Trades{
         TradePool.push(item);
         tradeReceived[count] = item;
         validTrade[count] = true;
+        validCount += 1;
         count += 1;
         emit StateTranslate(count-1, tradeReceived[count-1].state, tradeReceived[count-1].price, true);
     }
@@ -76,7 +79,7 @@ contract Trades{
         emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
     }
 
-    function finishTrade(uint id, string info) public{
+    function finishTrade(uint id, string memory info) public{
         require(validTrade[id], "unvalid id");
 
         trade storage tmptrade = tradeReceived[id];
@@ -115,12 +118,26 @@ contract Trades{
         owner.transfer(tradeReceived[id].price);
         tradeReceived[id].state = tradeState.Destory;
         validTrade[id] = false;
+        validCount -= 1;
         emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
     }
 
-    function showCount() view public returns (uint Count){
+    function showCount() view public returns (uint){
         return count;
     }
+
+    function getTrade(uint id) view public returns (string memory, string memory, uint){
+        require(validTrade[id], "unvalid id");
+
+        trade storage tmptrade = tradeReceived[id];
+        string memory title_ = tmptrade.title;
+        string memory detail_ = tmptrade.detail;
+        return (title_, detail_, uint(tmptrade.state));
+    }
+
+    function validId(uint id) view public returns (bool){
+        return validTrade[id];
+    } 
 
     function fund() external payable {}
 }

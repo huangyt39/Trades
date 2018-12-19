@@ -1,49 +1,38 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Hello - Truffle</title>
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="./scripts/index.js"></script>
-  </head>
-  <body>
-    <div class="alert alert-success" role="alert" style="display:none;" id="message-box"></div>
-    <div class="form-group">
-      <input type="text" class="form-control" id="username" aria-describedby="basic-addon1">
-    </div>
-    <button type="submit" id="submit" class="btn btn-success">调用合约</button>
-    <button type="submit" id="cancel" class="btn btn-default">重置</button>
-  </body>
+<head>
+  <title>Trades - Truffle Webpack Demo w/ Frontend</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <script src="./app.js"></script>
+</head>
+<body>
+  <h1>Trades</h1>
+
+  <br>
+  <h1>Create Trade and Get Count</h1>
+  <h3>The count of trades:  <span class="black"><span id="count"></span> </span></h3>
+  <br><label for="title">Title:</label><input type="text" id="title" placeholder="e.g., title"></input>
+  <br><label for="detail">Detail:</label><input type="text" id="detail" placeholder="e.g., detail"></input>
+  <br><label for="amount">Amount:</label><input type="text" id="amount" placeholder="e.g., 95"></input>
+  <!-- <br><label for="receiver">To Address:</label><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input> -->
+  <br><br><button id="create" onclick="App.createTrade()">Create Trade</button>
+  <button id="getCount" onclick="App.getCount()">Get Count</button>
+  <br><br>
+  <h1>Get Trade</h1>
+  <table id = "tradesTable">
+    <tr>
+      <td>Id</td>
+      <td>Title</td>
+      <td>Detail</td>
+      <td>State</td>
+    </tr>
+  </table>
+  <h3>Trade:  <span class="black"><span id="tradeinfo"></span> </span></h3>
+  <!-- <label for="id">Id of trade:</label><input type="text" id="id" placeholder="e.g., 0"></input> -->
+  <!-- <br><label for="receiver">To Address:</label><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input> -->
+  <br><br><button id="showTrades" onclick="App.showTrades()">Show Trades</button>
+  <span id="status"></span>
+  <br>
+  <!-- <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span> -->
+</body>
 </html>
-<script>
-  $(document).ready(function(){
-      $('#submit').on('click', function(){
-          var username = $('#username').val();
-          if(typeof username == 'undefined' || username == false){
-              alert('不能为空');
-          }else {
-                //调用App的say()方法
-              window.App.getCount(username, function (err, result) {
-                  if(err){
-                      alert('error');
-                      alert(err);
-                  }else {
-                      alert('call successfully');
-                      $('#username').val(username);
-                      $('#message-box').html(result);
-                      $('#message-box').show();
-                  }
-              });
-          }
-      });
-      $('#cancel').on('click', function(){
-          $('#username').val('');
-          $('#message-box').hide();
-          $('#message-box').html('');
-      });
-  });
-</script>

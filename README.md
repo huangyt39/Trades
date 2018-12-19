@@ -22,3 +22,7 @@ Trades.deployed().then(function(contract) {contract.showCount({from: web3.eth.ac
 
 ```
 Trades.deployed().then(function(contract) {contract.showCount()})
+
+
+
+truffle(develop)>  migrate --reset
