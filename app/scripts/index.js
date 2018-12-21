@@ -88,10 +88,23 @@ const App = {
 
   createTrade: function (){
     const self = this
-
+    if (document.getElementById('title').value == ""){
+      alert("Title can't be empty!")
+      return;
+    }
+    if (document.getElementById('amount').value == ""){
+      alert("Amount can't be empty!")
+      return;
+    }
+    if (parseInt(document.getElementById('amount').value) <= 0){
+      alert("Amount must bigger than 0!")
+      return;
+    }
     const amount = parseInt(document.getElementById('amount').value)
     const title = document.getElementById('title').value
     const detail = document.getElementById('detail').value
+    
+    
 
     this.setStatus('Creating a trade... (please wait)')
 
@@ -112,27 +125,51 @@ const App = {
   showTrades: function (){
     const self = this
 
-    const count = self.getCount()
+    var tradesTable = document.getElementById('tradesTable')
+    var rowNum = tradesTable.rows.length;
+     for (i=1;i<rowNum;i++)
+     {
+      tradesTable.deleteRow(i);
+         rowNum=rowNum-1;
+         i=i-1;
+     }
+
+    self.getCount()
+    const count = parseInt(document.getElementById('count').innerHTML)
 
     this.setStatus('Getting the information of the trades...')
 
-    for (var index = 0; index < count; index++)
+    var indexArr = []
+    for (var i = 0;i < count;i ++){
+      indexArr.push(i);
+    }
+
+    while(indexArr.length != 0)
       {
-        alert(index)
-        if (Trades.deployed().validId(index) == false){
-          continue
-        }
-        else{
-          this.getTrade(index)
-        }
+        let index = indexArr.pop()
+        let meta
+        Trades.deployed().then(function (instance) {
+          meta = instance
+          return meta.validId(index)
+        }).then(function (value) {
+          if(value == true){
+            self.getTrade(index)
+          }
+          else{
+            alert("invalid id:")
+            alert(index)
+          }
+        }).catch(function (e) {
+          console.log(e)
+          self.setStatus(e)
+        })
+
       }
   },
   
   getTrade: function (id){
     const self = this
-
     this.setStatus('Getting a trade... (please wait)')
-    alert(1111)
 
     let meta
     Trades.deployed().then(function (instance) {

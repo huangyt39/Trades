@@ -43,10 +43,12 @@ contract Trades{
     }
 
     function createTrade(string memory title_, string memory detail_) payable public {
-        if (msg.value < minPrice){
-            emit StateTranslate(count, tradeState.Unaccept, msg.value, false);
-            return;
-        }
+        // if (msg.value < minPrice){
+        //     emit StateTranslate(count, tradeState.Unaccept, msg.value, false);
+        //     return;
+        // }
+        require(msg.value > minPrice, "smaller than minPrice!");
+
         trade memory item = trade({
             initiatorAddress: msg.sender,
             recipientAddress: msg.sender,
