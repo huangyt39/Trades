@@ -65,76 +65,69 @@ contract Trades{
         validTrade[count] = true;
         validCount += 1;
         count += 1;
-        emit StateTranslate(count-1, tradeReceived[count-1].state, tradeReceived[count-1].price, true);
+        // emit StateTranslate(count-1, tradeReceived[count-1].state, tradeReceived[count-1].price, true);
     }
 
     function acceptTrade(uint id) public {
         require(validTrade[id], "unvalid id");
 
         trade storage tmptrade = tradeReceived[id];
-        if (tmptrade.state != tradeState.Unaccept || tmptrade.initiatorAddress == msg.sender){
-            emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, false);
-            return;
-        }
+        require(tmptrade.state == tradeState.Unaccept, "The state of the trade is not Unaccept");
+        require(msg.sender != tmptrade.initiatorAddress, "The initiatorAddress of the trade is the sender");
+        
         tmptrade.recipientAddress = msg.sender;
         tmptrade.state = tradeState.Unfinish;
         emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
     }
 
-    function finishTrade(uint id, string memory info) public{
+    function finishTrade(uint id) public{
         require(validTrade[id], "unvalid id");
 
         trade storage tmptrade = tradeReceived[id];
-        if (tmptrade.state != tradeState.Unfinish || tmptrade.recipientAddress != msg.sender){
-            emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, false);
-            return;
-        }
-        tmptrade.finishInfo = info;
+        require(tmptrade.state == tradeState.Unfinish, "The state of the trade is not Unfinish");
+        require(msg.sender == tmptrade.recipientAddress, "The recipientAddress of the trade is not the sender");
+        
         tmptrade.state = tradeState.Uncomfirm;
-        emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
+        // emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
     }
 
     function comfirmTrade(uint id) public{
         require(validTrade[id], "unvalid id");
 
         trade storage tmptrade = tradeReceived[id];
-        if(tmptrade.state != tradeState.Uncomfirm || msg.sender != tmptrade.initiatorAddress){
-            emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, false);
-            return;
-        }
+        require(tmptrade.state == tradeState.Uncomfirm, "The state of the trade is not Uncomfirm");
+        require(msg.sender == tmptrade.initiatorAddress, "The initiatorAddress of the trade is not the sender");
+        
         tradeReceived[id].comfirm = true;
         tradeReceived[id].state = tradeState.End;
         owner.transfer(tradeReceived[id].price);
-        validTrade[id] = false;
-        emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
+        // emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
     }
     
     function destoryTrade(uint id) public{
         require(validTrade[id], "unvalid id");
-
+        
         trade storage tmptrade = tradeReceived[id];
-        if(tmptrade.state != tradeState.Unaccept || msg.sender != tmptrade.initiatorAddress){
-            emit StateTranslate(tmptrade.id, tradeState.Destory, tmptrade.price, false);
-            return;
-        }
+        require(tmptrade.state == tradeState.Unaccept, "The state of the trade is not Unaccept");
+        require(msg.sender == tmptrade.initiatorAddress, "The address of the trade is not the sender");
+
         owner.transfer(tradeReceived[id].price);
         tradeReceived[id].state = tradeState.Destory;
         validTrade[id] = false;
         validCount -= 1;
-        emit StateTranslate(tmptrade.id, tmptrade.state, tmptrade.price, true);
     }
 
     function showCount() view public returns (uint){
         return count;
     }
 
-    function getTrade(uint id) view public returns (string memory, string memory, uint){
+    function getTrade(uint id) view public returns (string memory, string memory, uint, uint, address, address){
         require(validTrade[id], "unvalid id");
 
         trade storage tmptrade = tradeReceived[id];
         string memory title_ = tmptrade.title;
         string memory detail_ = tmptrade.detail;
-        return (title_, detail_, uint(tmptrade.state));
+        return (title_, detail_, uint(tmptrade.state), tmptrade.price, tmptrade.initiatorAddress, tmptrade.recipientAddress);
     }
 
     function validId(uint id) view public returns (bool){

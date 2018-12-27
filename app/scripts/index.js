@@ -40,7 +40,7 @@ const App = {
       accounts = accs
       account = accounts[0]
 
-      self.refreshBalance()
+      // self.refreshBalance()
     })
   },
 
@@ -49,55 +49,18 @@ const App = {
     status.innerHTML = message
   },
 
-  // refreshBalance: function () {
-  //   const self = this
-
-  //   let meta
-  //   MetaCoin.deployed().then(function (instance) {
-  //     meta = instance
-  //     return meta.getBalance.call(account, { from: account })
-  //   }).then(function (value) {
-  //     const balanceElement = document.getElementById('balance')
-  //     balanceElement.innerHTML = value.valueOf()
-  //   }).catch(function (e) {
-  //     console.log(e)
-  //     self.setStatus('Error getting balance; see log.')
-  //   })
-  // },
-
-  // sendCoin: function () {
-  //   const self = this
-
-  //   const amount = parseInt(document.getElementById('amount').value)
-  //   const receiver = document.getElementById('receiver').value
-
-  //   this.setStatus('Initiating transaction... (please wait)')
-
-  //   let meta
-  //   MetaCoin.deployed().then(function (instance) {
-  //     meta = instance
-  //     return meta.sendCoin(receiver, amount, { from: account })
-  //   }).then(function () {
-  //     self.setStatus('Transaction complete!')
-  //     self.refreshBalance()
-  //   }).catch(function (e) {
-  //     console.log(e)
-  //     self.setStatus('Error sending coin; see log.')
-  //   })
-  // },
-
   createTrade: function (){
     const self = this
     if (document.getElementById('title').value == ""){
-      alert("Title can't be empty!")
+      alert("标题不能为空！")
       return;
     }
     if (document.getElementById('amount').value == ""){
-      alert("Amount can't be empty!")
+      alert("价格不能为空！")
       return;
     }
     if (parseInt(document.getElementById('amount').value) <= 0){
-      alert("Amount must bigger than 0!")
+      alert("价格必须大于0！")
       return;
     }
     const amount = parseInt(document.getElementById('amount').value)
@@ -113,7 +76,7 @@ const App = {
       meta = instance
       return meta.createTrade(title, detail, {value:amount, from:account, gas:6000000})
     }).then(function () {
-      self.setStatus('Creation complete!')
+      self.setStatus('创建交易成功！')
       self.getCount()
     }).catch(function (e) {
       console.log(e)
@@ -137,7 +100,7 @@ const App = {
     self.getCount()
     const count = parseInt(document.getElementById('count').innerHTML)
 
-    this.setStatus('Getting the information of the trades...')
+    this.setStatus('正在获取交易的信息...')
 
     var indexArr = []
     for (var i = 0;i < count;i ++){
@@ -156,8 +119,8 @@ const App = {
             self.getTrade(index)
           }
           else{
-            alert("invalid id:")
-            alert(index)
+            // alert("invalid id:")
+            // alert(index)
           }
         }).catch(function (e) {
           console.log(e)
@@ -166,29 +129,219 @@ const App = {
 
       }
   },
-  
-  getTrade: function (id){
+
+  showPersonalTrades: function (){
     const self = this
-    this.setStatus('Getting a trade... (please wait)')
+
+    var tradesTable = document.getElementById('personalTradesTable')
+    var rowNum = tradesTable.rows.length;
+     for (i=1;i<rowNum;i++)
+     {
+      tradesTable.deleteRow(i);
+         rowNum=rowNum-1;
+         i=i-1;
+     }
+
+    self.getCount()
+    const count = parseInt(document.getElementById('count').innerHTML)
+    document.getElementById('personalCount').innerHTML = 0;
+
+    this.setStatus('正在获取交易的信息...')
+
+    var indexArr = []
+    for (var i = 0;i < count;i ++){
+      indexArr.push(i);
+    }
+
+    while(indexArr.length != 0)
+      {
+        let index = indexArr.pop()
+        let meta
+        Trades.deployed().then(function (instance) {
+          meta = instance
+          return meta.validId(index)
+        }).then(function (value) {
+          if(value == true){
+            if(self.getPersonalTrade(index)){
+              personalCount += 1;
+            }
+          }
+          else{
+            // alert("invalid id:")
+            // alert(index)
+          }
+        }).catch(function (e) {
+          console.log(e)
+          self.setStatus(e)
+        })
+
+      }
+
+      self.setStatus('交易读取完成！');
+
+  },
+  
+  acceptTrade: function (id){
+    const self = this
+    this.setStatus('正在接受交易...');
+
+    let meta
+    Trades.deployed().then(function (instance) {
+      meta = instance
+      // console.log(parseInt(id));
+      return meta.acceptTrade(parseInt(id), { from:account })
+    }).then(function () {
+      self.setStatus('接受交易成功！')
+    }).catch(function (e) {
+      console.log(e)
+      // alert(e)
+      self.setStatus(e)
+    })
+  },
+
+  getTrade: function (id){
+    const tradeState = {0:'待接受', 1:'待完成', 2:'待确认', 3:'已确认', 4:'Destory'}
+    const self = this
+    this.setStatus('正在读取交易...')
 
     let meta
     Trades.deployed().then(function (instance) {
       meta = instance
       return meta.getTrade(id, { from:account })
-    }).then(function ([title_, detail_, state_]) {
-      self.setStatus('Trade getting complete!')
+    }).then(function ([title_, detail_, state_, price_, address_, raddress_]) {
+      if(state_ != 0 || address_ == account){
+        self.setStatus('交易读取完成！');
+        return;
+      }
+      self.setStatus('交易读取完成！')
       var tradesTable = document.getElementById('tradesTable')
       var newRow = tradesTable.insertRow();
       var newCol0 = newRow.insertCell();
       var newCol1 = newRow.insertCell();
       var newCol2 = newRow.insertCell();
       var newCol3 = newRow.insertCell();
+      var newCol4 = newRow.insertCell();
+      var newCol5 = newRow.insertCell();
+      var newCol6 = newRow.insertCell();
       newCol0.innerText = id;
       newCol1.innerText = title_;
       newCol2.innerText = detail_;
-      newCol3.innerText = state_;
+      newCol3.innerText = price_;
+      newCol4.innerText = address_;
+      newCol5.innerText = tradeState[state_];
+      newCol6.innerHTML = '<button class="btn btn-default" id="acceptTrade" onclick="App.acceptTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">接受</button>';
     }).catch(function (e) {
       console.log(e)
+      self.setStatus(e)
+    })
+  },
+
+  getPersonalTrade: function (id){
+    const tradeState = {0:'待接受', 1:'待完成', 2:'待确认', 3:'已确认', 4:'Destory'}
+    const self = this
+    this.setStatus('正在读取交易...')
+
+    let meta
+    Trades.deployed().then(function (instance) {
+      meta = instance
+      return meta.getTrade(id, { from:account })
+    }).then(function ([title_, detail_, state_, price_, address_, raddress_]) {
+      if(address_ != account && raddress_ != account){
+        self.setStatus('交易读取完成！');
+        return;
+      }
+      self.setStatus('交易读取完成！')
+      var tradesTable = document.getElementById('personalTradesTable')
+      var newRow = tradesTable.insertRow();
+      var newCol0 = newRow.insertCell();
+      var newCol1 = newRow.insertCell();
+      var newCol2 = newRow.insertCell();
+      var newCol3 = newRow.insertCell();
+      var newCol4 = newRow.insertCell();
+      var newCol5 = newRow.insertCell();
+      var newCol6 = newRow.insertCell();
+      newCol0.innerText = id;
+      newCol1.innerText = title_;
+      newCol2.innerText = detail_;
+      newCol3.innerText = price_;
+      newCol4.innerText = address_;
+      newCol5.innerText = tradeState[state_];
+      if(raddress_ == account && state_ == 1){
+        newCol6.innerHTML = '<button class="btn btn-default" id="destoryTrade" onclick="App.finishTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">完成</button>';
+      }
+      if(raddress_ == account && state_ == 3){
+        newCol6.innerText = "已被确认";
+      }
+      if(address_ == account && state_ == 3){
+        newCol6.innerText = "已确认";
+      }
+      if(address_ == account && state_ == 0){
+        newCol6.innerHTML = '<button class="btn btn-default" id="destoryTrade" onclick="App.destoryTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">撤销</button>';
+      }
+      if(address_ == account && state_ == 2){
+        newCol6.innerHTML = '<button class="btn btn-default" id="destoryTrade" onclick="App.comfirmTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">确认</button>';
+      }
+      let tmpCount = parseInt(document.getElementById('personalCount').innerHTML);
+      document.getElementById('personalCount').innerHTML = tmpCount +1;
+    }).catch(function (e) {
+      console.log(e)
+      self.setStatus(e)
+    })
+  },
+
+  finishTrade: function (id){
+    const self = this
+    this.setStatus('正在完成交易...');
+
+    console.log(account);
+    let meta
+    Trades.deployed().then(function (instance) {
+      meta = instance
+      return meta.finishTrade(parseInt(id), { from:account })
+    }).then(function () {
+      self.setStatus('完成交易完成！');
+      self.getPersonalTrade();
+    }).catch(function (e) {
+      console.log(e)
+      // alert(e)
+      self.setStatus(e)
+    })
+  },
+
+  comfirmTrade: function (id){
+    const self = this
+    this.setStatus('正在确认交易...');
+
+    console.log(account);
+    let meta
+    Trades.deployed().then(function (instance) {
+      meta = instance
+      return meta.comfirmTrade(parseInt(id), { from:account })
+    }).then(function () {
+      self.setStatus('确认交易完成！')
+      self.getPersonalTrade();
+    }).catch(function (e) {
+      console.log(e)
+      // alert(e)
+      self.setStatus(e)
+    })
+  },
+
+  destoryTrade: function (id){
+    const self = this
+    this.setStatus('正在撤销交易...');
+
+    console.log(account);
+    let meta
+    Trades.deployed().then(function (instance) {
+      meta = instance
+      return meta.destoryTrade(parseInt(id), { from:account })
+    }).then(function () {
+      self.setStatus('撤销交易完成！')
+      self.getPersonalTrade();
+    }).catch(function (e) {
+      console.log(e)
+      // alert(e)
       self.setStatus(e)
     })
   },
@@ -196,14 +349,14 @@ const App = {
   getCount: function (){
     const self = this
 
-    this.setStatus('Getting the count... (please wait)')
+    this.setStatus('正在读取交易数量...')
 
     let meta
     Trades.deployed().then(function (instance) {
       meta = instance
       return meta.showCount()
     }).then(function (value) {
-      self.setStatus('Count getting complete!')
+      self.setStatus('交易数量读取完成！')
       const countElement = document.getElementById('count')
       countElement.innerHTML = value.valueOf()
     }).catch(function (e) {
@@ -211,8 +364,73 @@ const App = {
       // alert(e)
       self.setStatus(e)
     })
-  }
+  },
 
+  login : function ()
+        {
+            var oCreate = document.getElementById('login');
+            var oCreateBox = document.getElementById('login-box');
+            var oOver = document.getElementById('over');
+            var oClose2 = document.getElementById('close');
+            var oUserName = document.getElementById('username');
+            var oPasswd = document.getElementById('passwd');
+            var loginbtn = document.getElementById('loginbtn');
+            oCreate.onclick = function ()
+            {
+                oCreateBox.style.display = 'block';
+                oOver.style.display = 'block';
+                oCreateBox.style.zIndex = 1;  //设置元素的显示优先层级，zIndex越高,优先级越高，通俗点就是往上覆盖.
+            };
+            oClose2.onclick = function ()
+            {
+                oCreateBox.style.display = 'none';
+                oOver.style.display = 'none';
+            };
+            oUserName.onclick = function ()
+            {
+                oUserName.value='';   //清除提示文字
+            };
+            oPasswd.onfocus = function ()
+            {
+                oPasswd.value='';   //清除提示文字
+                oPasswd.type = 'password'; //把文本框类型设为密码
+            }
+            loginbtn.onclick = function ()
+            {
+              if (oUserName.value == ""){
+                alert("用户名不能为空");
+              }
+              account = oUserName.value;
+              oCreateBox.style.display = 'none';
+              oOver.style.display = 'none';
+              oUserName.value = "";
+              oPasswd.value = "";
+              const countElement = document.getElementById('account');
+              countElement.innerHTML = account;
+            }
+        },
+
+  createBox : function ()
+        {
+            var oCreate = document.getElementById('createBox');
+            var oCreateBox = document.getElementById('create-box');
+            var oOver2 = document.getElementById('over2');
+            var oClose2 = document.getElementById('close2');
+            var oUserName = document.getElementById('username');
+            var oPasswd = document.getElementById('passwd');
+            // var createbtn = document.getElementById('create');
+            oCreate.onclick = function ()
+            {
+                oCreateBox.style.display = 'block';
+                oOver2.style.display = 'block';
+                oCreateBox.style.zIndex = 1;  //设置元素的显示优先层级，zIndex越高,优先级越高，通俗点就是往上覆盖.
+            };
+            oClose2.onclick = function ()
+            {
+                oCreateBox.style.display = 'none';
+                oOver2.style.display = 'none';
+            };
+        }
 }
 
 window.App = App

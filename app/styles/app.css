@@ -1,6 +1,6 @@
 body {
-  margin-left: 25%;
-  margin-right: 25%;
+  margin-left: 20%;
+  margin-right: 20%;
   margin-top: 2%;
   font-family: "Open Sans", sans-serif;
 }
@@ -11,7 +11,7 @@ label {
 }
 
 input {
-  width: 500px;
+  width: 200px;
   padding: 5px;
   font-size: 16px;
 }
@@ -39,6 +39,12 @@ h3 {
   font-size: 24px;
 }
 
+h4 {
+  font-weight: normal;
+  color: rgb(0,0,0);
+  font-size: 20px;
+}
+
 .black {
   color: black;
 }
@@ -50,3 +56,7 @@ h3 {
 .hint {
   color: #666;
 }
+
+/*登陆框*/
+#login-box{display:none;width:420px;height: 240px;background: #eeeeee;position: absolute;left: 50%;top:50%;margin-left: -175px;margin-top: -150px;}
+#create-box{display:none;width:420px;height: 260px;background: #eeeeee;position: absolute;left: 50%;top:50%;margin-left: -175px;margin-top: -150px;}
