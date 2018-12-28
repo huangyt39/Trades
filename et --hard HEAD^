@@ -1,0 +1,83 @@
+[33mcommit 9763f6d824fc5a614c1b045bd7e9107879acc3d2[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Thu Dec 27 23:46:33 2018 +0800
+
+    basic page and functions call
+
+[33mcommit e4719669c8ef6dc9c59188e0d84c58eab35fc1b9[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Fri Dec 21 23:56:56 2018 +0800
+
+    show trades
+
+[33mcommit 1fc9b479135b314cf2d82336fa834bd2a3b22e9b[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Thu Dec 20 01:08:01 2018 +0800
+
+    show count;create trade
+
+[33mcommit b6756f17f1accd187d7f2dfc9813090e3160d9b8[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Wed Dec 19 15:55:11 2018 +0800
+
+    rm
+
+[33mcommit 0228a8dfeee0b34800b92363207864065e47f180[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Wed Dec 19 15:54:39 2018 +0800
+
+    learn how to connect with frontend
+
+[33mcommit 149a91804af5f4f25392787b31c269f95d7e3d21[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Wed Dec 19 15:47:37 2018 +0800
+
+    learn how to connect with frontend
+
+[33mcommit 401342f1d6b16c2b190386f86ba41639b40e516f[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Thu Nov 22 09:21:20 2018 +0800
+
+    complete test
+
+[33mcommit 2374bab18751055fd898229d39daa948ad967e41[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Wed Nov 21 23:10:05 2018 +0800
+
+    basic test
+
+[33mcommit 19660e0ab74c512da3aa402f09177967e00dc55e[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Tue Nov 20 23:53:57 2018 +0800
+
+    change testfile to js
+
+[33mcommit 829c638c5c61a3c93c52a80ec6878fcebbc239df[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Mon Nov 19 23:27:05 2018 +0800
+
+    Debug
+
+[33mcommit 36c267daa56ee4dee4745b88046b0d9e2b145fa3[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Fri Nov 9 21:43:55 2018 +0800
+
+    ..doing nothing
+
+[33mcommit ebc84c1db34c4d0097293d8cd394daea538240f3[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Fri Nov 9 00:23:03 2018 +0800
+
+    framework
+
+[33mcommit 4537834cd39c6864db368dd6458582f42dfed023[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Thu Nov 8 09:41:10 2018 +0800
+
+    basic code
+
+[33mcommit 226801afc5570843ef18edb5bcdf0d2009f27139[m
+Author: huangyt39 <824551061@qq.com>
+Date:   Tue Nov 6 20:19:15 2018 +0800
+
+    first commit

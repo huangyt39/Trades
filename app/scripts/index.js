@@ -17,6 +17,7 @@ const Trades = contract(tradesArtifact)
 let accounts
 let account
 let trades
+let address2username
 
 const App = {
   start: function () {
@@ -39,6 +40,14 @@ const App = {
 
       accounts = accs
       account = accounts[0]
+
+      address2username = {};
+      for(let i = 0;i < 10;i ++){
+        address2username[accounts[i]] = "User" + parseInt(i);
+      }
+
+      const countElement = document.getElementById('account');
+      countElement.innerHTML = address2username[account];
 
       // self.refreshBalance()
     })
@@ -67,7 +76,12 @@ const App = {
     const title = document.getElementById('title').value
     const detail = document.getElementById('detail').value
     
-    
+    document.getElementById('amount').value = ""
+    document.getElementById('title').value = ""
+    document.getElementById('detail').value = ""
+
+    document.getElementById('create-box').style.display = 'none'
+    document.getElementById('over2').style.display = 'none'
 
     this.setStatus('Creating a trade... (please wait)')
 
@@ -77,7 +91,7 @@ const App = {
       return meta.createTrade(title, detail, {value:amount, from:account, gas:6000000})
     }).then(function () {
       self.setStatus('创建交易成功！')
-      self.getCount()
+      App.showPersonalTrades();
     }).catch(function (e) {
       console.log(e)
       // alert(e)
@@ -99,6 +113,9 @@ const App = {
 
     self.getCount()
     const count = parseInt(document.getElementById('count').innerHTML)
+
+    document.getElementById('acceptabelcount').innerHTML = 0
+    document.getElementById('acceptabelcounticon').innerHTML = 0
 
     this.setStatus('正在获取交易的信息...')
 
@@ -145,6 +162,7 @@ const App = {
     self.getCount()
     const count = parseInt(document.getElementById('count').innerHTML)
     document.getElementById('personalCount').innerHTML = 0;
+    document.getElementById('personalCounticon').innerHTML = 0;
 
     this.setStatus('正在获取交易的信息...')
 
@@ -197,6 +215,9 @@ const App = {
       // alert(e)
       self.setStatus(e)
     })
+
+    App.showPersonalTrades();
+    App.showTrades();
   },
 
   getTrade: function (id){
@@ -227,9 +248,12 @@ const App = {
       newCol1.innerText = title_;
       newCol2.innerText = detail_;
       newCol3.innerText = price_;
-      newCol4.innerText = address_;
+      newCol4.innerText = address2username[address_];
       newCol5.innerText = tradeState[state_];
       newCol6.innerHTML = '<button class="btn btn-default" id="acceptTrade" onclick="App.acceptTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">接受</button>';
+      var count = parseInt(document.getElementById('acceptabelcount').innerHTML);
+      document.getElementById('acceptabelcount').innerHTML = count+1;
+      document.getElementById('acceptabelcounticon').innerHTML = count+1;
     }).catch(function (e) {
       console.log(e)
       self.setStatus(e)
@@ -260,29 +284,32 @@ const App = {
       var newCol4 = newRow.insertCell();
       var newCol5 = newRow.insertCell();
       var newCol6 = newRow.insertCell();
+      var newCol7 = newRow.insertCell();
       newCol0.innerText = id;
       newCol1.innerText = title_;
       newCol2.innerText = detail_;
       newCol3.innerText = price_;
-      newCol4.innerText = address_;
-      newCol5.innerText = tradeState[state_];
+      newCol4.innerText = address2username[address_];
+      newCol5.innerText = address2username[raddress_];
+      newCol6.innerText = tradeState[state_];
       if(raddress_ == account && state_ == 1){
-        newCol6.innerHTML = '<button class="btn btn-default" id="destoryTrade" onclick="App.finishTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">完成</button>';
+        newCol7.innerHTML = '<button class="btn btn-default" id="destoryTrade" onclick="App.finishTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">完成</button>';
       }
       if(raddress_ == account && state_ == 3){
-        newCol6.innerText = "已被确认";
+        newCol7.innerText = "已被确认";
       }
       if(address_ == account && state_ == 3){
-        newCol6.innerText = "已确认";
+        newCol7.innerText = "已确认";
       }
       if(address_ == account && state_ == 0){
-        newCol6.innerHTML = '<button class="btn btn-default" id="destoryTrade" onclick="App.destoryTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">撤销</button>';
+        newCol7.innerHTML = '<button class="btn btn-default" id="destoryTrade" onclick="App.destoryTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">撤销</button>';
       }
       if(address_ == account && state_ == 2){
-        newCol6.innerHTML = '<button class="btn btn-default" id="destoryTrade" onclick="App.comfirmTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">确认</button>';
+        newCol7.innerHTML = '<button class="btn btn-default" id="destoryTrade" onclick="App.comfirmTrade(parseInt(this.parentNode.parentNode.firstChild.innerHTML))">确认</button>';
       }
       let tmpCount = parseInt(document.getElementById('personalCount').innerHTML);
       document.getElementById('personalCount').innerHTML = tmpCount +1;
+      document.getElementById('personalCounticon').innerHTML = tmpCount +1;
     }).catch(function (e) {
       console.log(e)
       self.setStatus(e)
@@ -306,6 +333,8 @@ const App = {
       // alert(e)
       self.setStatus(e)
     })
+
+    App.showPersonalTrades();
   },
 
   comfirmTrade: function (id){
@@ -325,6 +354,8 @@ const App = {
       // alert(e)
       self.setStatus(e)
     })
+
+    App.showPersonalTrades();
   },
 
   destoryTrade: function (id){
@@ -344,13 +375,20 @@ const App = {
       // alert(e)
       self.setStatus(e)
     })
+
+    App.showPersonalTrades();
   },
 
-  getCount: function (){
+  getCount: async function (){
     const self = this
-
+    console.log('正在读取交易数量...')
     this.setStatus('正在读取交易数量...')
-
+    try {
+      let result = await Trades.deployed()
+      console.log(result)
+    } catch(err) {
+      console.log(err)
+    }
     let meta
     Trades.deployed().then(function (instance) {
       meta = instance
@@ -398,15 +436,32 @@ const App = {
             loginbtn.onclick = function ()
             {
               if (oUserName.value == ""){
-                alert("用户名不能为空");
+                alert("用户不能为空");
+                oUserName.value = "";
+                oPasswd.value = "";
+                return;
               }
-              account = oUserName.value;
+              if (oPasswd.value == ""){
+                alert("地址不能为空");
+                oUserName.value = "";
+                oPasswd.value = "";
+                return;
+              }
+              if (oUserName.value != address2username[oPasswd.value]){
+                alert("用户与地址不匹配");
+                oUserName.value = "";
+                oPasswd.value = "";
+                return;
+              }
+              account = oPasswd.value;
               oCreateBox.style.display = 'none';
               oOver.style.display = 'none';
               oUserName.value = "";
               oPasswd.value = "";
               const countElement = document.getElementById('account');
-              countElement.innerHTML = account;
+              countElement.innerHTML = address2username[account];
+              App.showPersonalTrades();
+              App.showTrades();
             }
         },
 

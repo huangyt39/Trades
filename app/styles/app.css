@@ -58,5 +58,40 @@ h4 {
 }
 
 /*登陆框*/
-#login-box{display:none;width:420px;height: 240px;background: #eeeeee;position: absolute;left: 50%;top:50%;margin-left: -175px;margin-top: -150px;}
-#create-box{display:none;width:420px;height: 260px;background: #eeeeee;position: absolute;left: 50%;top:50%;margin-left: -175px;margin-top: -150px;}
+#login-box {
+  display:none;
+  width:420px;
+  height: 240px;
+  background: #eeeeee;
+  position: absolute;
+  left: 50%;
+  top:50%;
+  margin-left: -200px;
+  margin-top: -150px;
+}
+
+#create-box {
+  display:none;
+  width:420px;
+  height: 260px;
+  background: #eeeeee;
+  position: absolute;
+  left: 50%;
+  top:50%;
+  margin-left: -200px;
+  margin-top: -150px;
+}
+
+.table thead tr td{
+  vertical-align: middle;
+}
+
+#acceptabelcounticon {
+  background-color: #f76d6d;
+  font-size: 24px;
+}
+
+#personalCounticon {
+  background-color: #f76d6d;
+  font-size: 24px;
+}
