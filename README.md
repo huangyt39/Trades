@@ -1,6 +1,6 @@
 # Trades
 
-![overview](https://github.com/huangyt39/Trades/tree/master/pic/overview.png)
+![overview](https://github.com/huangyt39/Trades/blob/master/pic/overview.png?raw=true)
 
 ## 选题背景和依据
 
@@ -24,13 +24,13 @@
 
   ```
   geth --networkid 666 --nodiscover --datadir chain0 --port 30303 --rpc --rpcapi 		net,eth,web3,personal --rpcport 9545 --rpcaddr localhost console 2>>geth1.log
-  personal.eth.newAccount("")
-  eth.unlockAccount(eth.accounts[0])
+  personal.newAccount("")
+  personalunlockAccount(eth.accounts[0])
   miner.start()
   # miner.stop()
   ```
 
-- 确认开始挖矿之后，在命令行中打开主目录，执行以下命令进行部署
+- 查看日志文件确认开始挖矿之后，在命令行中打开主目录，执行以下命令进行部署
 
   ```
   truffle --networks clean
@@ -51,48 +51,62 @@
   personal.newAccount("")
   personal.newAccount("")
   personal.newAccount("")
-  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[1], 						value:web3.toWei(100, "ether")})
-  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[2], 						value:web3.toWei(100, "ether")})
-  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[3], 						value:web3.toWei(100, "ether")})
+  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[1], 						value:web3.toWei(1, "ether")})
+  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[2], 						value:web3.toWei(1, "ether")})
+  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[3], 						value:web3.toWei(1, "ether")})
   ```
+
+- 注意在运行程序的过程中不能停止挖矿
 
 ## 测试
 
 #### 登录
 
-![login](https://github.com/huangyt39/Trades/tree/master/pic/login.png)
+![login](https://github.com/huangyt39/Trades/blob/master/pic/login.png?raw=true)
 
 输入用户（如User0、User1...）和地址，点击登录按钮，如果用户与地址匹配，登录成功，否则登录失败
 
 ##### 登录成功
 
-![loginSuccess](https://github.com/huangyt39/Trades/tree/master/pic/loginSuccess.png)
+![loginSuccess](https://github.com/huangyt39/Trades/blob/master/pic/loginSuccess.png?raw=true)
 
 若登录成功，当前用户切换为登录用户，交易也同步刷新
 
 ##### 登录失败
 
-![loginFail](https://github.com/huangyt39/Trades/tree/master/pic/loginFail.png)
+![loginFail](https://github.com/huangyt39/Trades/blob/master/pic/loginFail.png?raw=true)
 
 若登录失败、用户或地址为空则弹窗警示，当前用户不会改变
 
 #### 刷新交易
 
-![refresh](https://github.com/huangyt39/Trades/tree/master/pic/refresh.png)
+![refresh](https://github.com/huangyt39/Trades/blob/master/pic/refresh.png?raw=true)
 
 点击刷新按钮可以刷新相应表格中的交易信息
 
 #### 创建交易
 
-![create](https://github.com/huangyt39/Trades/tree/master/pic/create.png)
+记录此时User1与User2的Balance，与完成交易后的对比
 
-发起人视角：
+```
+eth.getBalance(eth.accounts[0])
+eth.getBalance(eth.accounts[1])
+```
 
-![create](https://github.com/huangyt39/Trades/tree/master/pic/createSuccess.png)
+结果如下：
 
-其他人视角：
+```
+1000
+1000
+```
 
-![accepct](https://github.com/huangyt39/Trades/tree/master/pic/accepct.png)
+点击新建交易按钮创建交易
+
+![create](https://github.com/huangyt39/Trades/blob/master/pic/create.png?raw=true)
+
+创建完成后其他人视角：
+
+![accepct](https://github.com/huangyt39/Trades/blob/master/pic/accepct.png?raw=true)
 
 
 
@@ -100,25 +114,47 @@
 
 #### 接受交易
 
-![accepct](https://github.com/huangyt39/Trades/tree/master/pic/accepct.png)
+接受前：
+
+![accepct](https://github.com/huangyt39/Trades/blob/master/pic/accepct.png?raw=true)
+
+接受后：
+
+![accepct](https://github.com/huangyt39/Trades/blob/master/pic/accepct2.png?raw=true)
 
 接受交易后，交易状态转变为待完成，当前用户成为交易接受人，同时可以在与我有关的交易中看到，同时交易发起人可以看到交易状态转变为待完成
 
 #### 完成交易
 
-![finish](https://github.com/huangyt39/Trades/tree/master/pic/finish.png)
+![finish](https://github.com/huangyt39/Trades/blob/master/pic/finish.png?raw=true)
 
 完成交易后，交易状态转变为待确认，等待交易发起人进行确认
 
+此时再次输出User1与User2的Balance，与进行交易前做对比
+
+```
+eth.getBalance(eth.accounts[0])
+eth.getBalance(eth.accounts[1])
+```
+
+结果如下：
+
+```
+1025
+975
+```
+
+点击新建交易按钮创建交易
+
 #### 确认交易
 
-![comfirm](https://github.com/huangyt39/Trades/tree/master/pic/comfirm.png)
+![comfirm](https://github.com/huangyt39/Trades/blob/master/pic/comfirm.png?raw=true)
 
 确认交易后，交易状态转变为已确认，合约向交易接受人转入相应价格的币。已经被确认的交易会保留在发起人和接受人的与其相关的交易中
 
 #### 撤销交易
 
-![destory](https://github.com/huangyt39/Trades/tree/master/pic/destory.png)
+![destory](https://github.com/huangyt39/Trades/blob/master/pic/destory.png?raw=true)
 
 只有当交易状态为未接受时，发起人才能撤销交易，撤销后发起人也无法查询到该交易
 
