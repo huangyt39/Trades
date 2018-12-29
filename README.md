@@ -104,6 +104,10 @@ eth.getBalance(eth.accounts[1])
 
 ![create](https://github.com/huangyt39/Trades/blob/master/pic/create.png?raw=true)
 
+创建完成后发起人视角：
+
+![create2](https://github.com/huangyt39/Trades/blob/master/pic/createSuccess.png?raw=true)
+
 创建完成后其他人视角：
 
 ![accepct](https://github.com/huangyt39/Trades/blob/master/pic/accepct.png?raw=true)
@@ -120,15 +124,35 @@ eth.getBalance(eth.accounts[1])
 
 接受后：
 
+- 接受人视角：
+
 ![accepct](https://github.com/huangyt39/Trades/blob/master/pic/accepct2.png?raw=true)
 
 接受交易后，交易状态转变为待完成，当前用户成为交易接受人，同时可以在与我有关的交易中看到，同时交易发起人可以看到交易状态转变为待完成
 
 #### 完成交易
 
+接受人视角
+
 ![finish](https://github.com/huangyt39/Trades/blob/master/pic/finish.png?raw=true)
 
+发起人视角：
+
+![finish](https://github.com/huangyt39/Trades/blob/master/pic/finish2.png?raw=true)
+
 完成交易后，交易状态转变为待确认，等待交易发起人进行确认
+
+#### 确认交易
+
+接受人视角：
+
+![comfirm](https://github.com/huangyt39/Trades/blob/master/pic/comfirm.png?raw=true)
+
+发起人视角：
+
+![comfirm](https://github.com/huangyt39/Trades/blob/master/pic/comfirm2.png?raw=true)
+
+确认交易后，交易状态转变为已确认，合约向交易接受人转入相应价格的币。已经被确认的交易会保留在发起人和接受人的与其相关的交易中
 
 此时再次输出User1与User2的Balance，与进行交易前做对比
 
@@ -140,17 +164,9 @@ eth.getBalance(eth.accounts[1])
 结果如下：
 
 ```
-1025
 975
+1025
 ```
-
-点击新建交易按钮创建交易
-
-#### 确认交易
-
-![comfirm](https://github.com/huangyt39/Trades/blob/master/pic/comfirm.png?raw=true)
-
-确认交易后，交易状态转变为已确认，合约向交易接受人转入相应价格的币。已经被确认的交易会保留在发起人和接受人的与其相关的交易中
 
 #### 撤销交易
 
