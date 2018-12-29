@@ -1,6 +1,6 @@
 # Trades
 
-![overview](https://github.com/huangyt39/Trades/blob/master/pic/overview.png?raw=true)
+![overview](https://github.com/huangyt39/Trades/blob/master/pic/accepct.png?raw=true)
 
 ## 选题背景和依据
 
@@ -23,7 +23,7 @@
 - 首先安装geth，创建account并unlock后开始挖矿（注意端口可能需要改变
 
   ```
-  geth --networkid 666 --nodiscover --datadir chain0 --port 30303 --rpc --rpcapi 		net,eth,web3,personal --rpcport 9545 --rpcaddr localhost console 2>>geth1.log
+  geth --networkid 666 --nodiscover --datadir chain0 --port 30303 --rpc --rpcapi net,eth,web3,personal --rpcport 9545 --rpcaddr localhost console 2>>geth1.log
   personal.newAccount("")
   personalunlockAccount(eth.accounts[0])
   miner.start()
@@ -51,9 +51,9 @@
   personal.newAccount("")
   personal.newAccount("")
   personal.newAccount("")
-  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[1], 						value:web3.toWei(1, "ether")})
-  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[2], 						value:web3.toWei(1, "ether")})
-  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[3], 						value:web3.toWei(1, "ether")})
+  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[1],value:web3.toWei(1, "ether")})
+  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[2],value:web3.toWei(1, "ether")})
+  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[3],value:web3.toWei(1, "ether")})
   ```
 
 - 注意在运行程序的过程中不能停止挖矿
