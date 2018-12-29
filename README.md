@@ -23,12 +23,20 @@
 - 首先安装geth，创建account并unlock后开始挖矿（注意端口可能需要改变
 
   ```
-  geth --networkid 666 --nodiscover --datadir chain0 --port 30303 --rpc --rpcapi net,eth,web3,personal --rpcport 9545 --rpcaddr localhost console 2>>geth1.log
+  geth --networkid 666 --nodiscover --datadir blockchainData --port 30303 --rpc --rpcapi net,eth,web3,personal --rpcport 9545 --rpcaddr localhost console 2>>geth1.log
   personal.newAccount("")
-  personalunlockAccount(eth.accounts[0])
+  personal.unlockAccount(eth.accounts[0])
   miner.start()
   # miner.stop()
   ```
+
+  运行结果如下：
+
+  ![geth](https://github.com/huangyt39/Trades/blob/master/pic/geth.png?raw=true)
+
+  打开日志文件，看到类似下方的信息之后可以确认已经开始挖矿
+
+  ![miner](https://github.com/huangyt39/Trades/blob/master/pic/miner.png?raw=true)
 
 - 查看日志文件确认开始挖矿之后，在命令行中打开主目录，执行以下命令进行部署
 
@@ -37,23 +45,40 @@
   truffle migrate --network geth --reset
   ```
 
+  运行结果如下：
+
+  ![migrate](https://github.com/huangyt39/Trades/blob/master/pic/migrate.png?raw=true)
+
+  ![migrate2](https://github.com/huangyt39/Trades/blob/master/pic/migrate2.png?raw=true)
+
 - npm自动化任务
 
   ```
   npm run dev
   ```
 
+  运行结果如下：
+
+  ![run](https://github.com/huangyt39/Trades/blob/master/pic/run.png?raw=true)
+
+  ![run2](https://github.com/huangyt39/Trades/blob/master/pic/run2.png?raw=true)
+
 - 在浏览器中打开127.0.01:8080就可以看到dapp的界面了
 
-- 新建几个账户并转入一些币用于测试，查看账户
+  ![overview2](https://github.com/huangyt39/Trades/blob/master/pic/overview2.png?raw=true)
+
+- 新建、解锁几个账户并转入一些币用于测试，查看账户
 
   ```
   personal.newAccount("")
   personal.newAccount("")
   personal.newAccount("")
-  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[1],value:web3.toWei(1, "ether")})
-  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[2],value:web3.toWei(1, "ether")})
-  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[3],value:web3.toWei(1, "ether")})
+  personal.unlockAccount(eth.accounts[1])
+  personal.unlockAccount(eth.accounts[2])
+  personal.unlockAccount(eth.accounts[3])
+  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[1],value:100)})
+  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[2],value:100)})
+  eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[3],value:100)})
   ```
 
 - 注意在运行程序的过程中不能停止挖矿

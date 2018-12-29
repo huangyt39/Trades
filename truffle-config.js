@@ -15,6 +15,13 @@ module.exports = {
       network_id: "*", // Match any network id
       gas: 6721975,
       gasPrice: 200000000
+    },
+    geth: {
+      host: "127.0.0.1",
+      port: 9545,
+      network_id: "*", // Match any network id
+      gas: 4712380,
+      gasPrice: 200000000
     }
   }
 }
