@@ -1,6 +1,6 @@
 # Trades
 
-![overview](https://github.com/huangyt39/Trades/blob/master/pic/accepct.png?raw=true)
+![overview](https://github.com/huangyt39/Trades/blob/master/pic/overview.png?raw=true)
 
 ## 选题背景和依据
 
